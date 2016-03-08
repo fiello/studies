@@ -1,6 +1,11 @@
 
-func printArray<T>(array: [[T]])
+func printArray<T>(array: [[T]], _ msg: String = "")
 {
+    if (!msg.isEmpty)
+    {
+        print("\(msg)")
+    }
+    
     for row in array
     {
         for cell in row
@@ -9,7 +14,7 @@ func printArray<T>(array: [[T]])
         }
         print("")
     }
-    
+    print("")
 }
 
 
@@ -23,3 +28,8 @@ for row in 0..<numberOfRows
 }
 
 printArray(board)
+board[1][3] = 1;
+board[2][2] = 1;
+board[3][1] = 1;
+printArray(board, "gated board")
+
