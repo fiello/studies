@@ -5,7 +5,6 @@ protocol Waveable
     func getCell(row: Int, col: Int) -> Cell?
 }
 
-
 class Cell
 {
     var row: Int
@@ -21,6 +20,16 @@ class Cell
         self.value = 0
         self.wave = 0
         self.parent = parent
+    }
+    
+    func getNeighbours() -> Array<Cell?>
+    {
+        var neighbours = Array<Cell?>()
+        neighbours.append(left());
+        neighbours.append(right());
+        neighbours.append(up());
+        neighbours.append(down());
+        return neighbours;
     }
     
     func left() -> Cell?
@@ -100,7 +109,7 @@ class Board : Waveable
         }
         
         let path = startWave(srcCell, dstCell: dstCell)
-        //calmArray()
+        calmArray()
         return !path.isEmpty
     }
     
@@ -124,15 +133,7 @@ class Board : Waveable
                 return nextWave;
             }
             
-            let left = cell.left()
-            let right = cell.right()
-            let up = cell.up()
-            let down = cell.down()
-            
-            appendToWaveIfValid(&nextWave, sourceCell: cell, newCell: left)
-            appendToWaveIfValid(&nextWave, sourceCell: cell, newCell: right)
-            appendToWaveIfValid(&nextWave, sourceCell: cell, newCell: up)
-            appendToWaveIfValid(&nextWave, sourceCell: cell, newCell: down)
+            appendToWaveIfValid(&nextWave, sourceCell: cell)
         }
         
         if nextWave.isEmpty
@@ -143,12 +144,16 @@ class Board : Waveable
         return sendNextWave(dstCell, currentWave: nextWave)
     }
     
-    func appendToWaveIfValid(inout wave:Array<Cell>, sourceCell: Cell, newCell: Cell?)
+    func appendToWaveIfValid(inout wave:Array<Cell>, sourceCell: Cell)
     {
-        if let nc = newCell where nc.value == 0 && nc.wave == 0
+        let newCells = sourceCell.getNeighbours()
+        for newCell in newCells
         {
-            newCell!.wave = sourceCell.wave + 1
-            wave.append(newCell!)
+            if let nc = newCell where nc.value == 0 && nc.wave == 0
+            {
+                newCell!.wave = sourceCell.wave + 1
+                wave.append(newCell!)
+            }
         }
     }
     
@@ -207,14 +212,18 @@ let numberOfColumns : Int = 5;
 
 var brd = Board(height: numberOfRows, width: numberOfColumns)
 brd.printArray()
-brd.data[0][4].value = 1;
+brd.data[1][0].value = 1;
+brd.data[1][1].value = 1;
+brd.data[1][2].value = 1;
 brd.data[1][3].value = 1;
-brd.data[2][2].value = 1;
 brd.data[3][1].value = 1;
-brd.data[4][0].value = 1;
+brd.data[3][2].value = 1;
+brd.data[3][3].value = 1;
+brd.data[3][4].value = 1;
+//brd.data[4][0].value = 1;
 
 brd.printArray("gated board")
-if brd.findPath(0, srcCol: 0, dstRow: 1	, dstCol: 4)
+if brd.findPath(0, srcCol: 0, dstRow: 4, dstCol: 4)
 {
     print("ok")
 }
@@ -222,5 +231,3 @@ else
 {
     print("failure!")
 }
-
-brd.printArray("waved")
