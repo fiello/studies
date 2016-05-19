@@ -22,13 +22,22 @@ class Cell
         self.parent = parent
     }
     
-    func getNeighbours() -> Array<Cell?>
+    func getFreeNeighbours() -> Array<Cell>
     {
-        var neighbours = Array<Cell?>()
-        neighbours.append(left());
-        neighbours.append(right());
-        neighbours.append(up());
-        neighbours.append(down());
+        var neighbours = Array<Cell>()
+        typealias cellGetter = () -> (Cell?)
+        let captureCell = {
+            (getCell: cellGetter, inout cells: Array<Cell>) -> Void in
+            if let nc = getCell() where nc.value == 0 && nc.wave == 0
+            {
+                cells.append(nc)
+            }
+        }
+        
+        captureCell(left, &neighbours)
+        captureCell(right, &neighbours)
+        captureCell(up, &neighbours)
+        captureCell(down, &neighbours)
         return neighbours;
     }
     
@@ -109,7 +118,7 @@ class Board : Waveable
         }
         
         let path = startWave(srcCell, dstCell: dstCell)
-        calmArray()
+        calmArray() // comment here if want to see "waved" array
         return !path.isEmpty
     }
     
@@ -146,14 +155,11 @@ class Board : Waveable
     
     func appendToWaveIfValid(inout wave:Array<Cell>, sourceCell: Cell)
     {
-        let newCells = sourceCell.getNeighbours()
+        let newCells = sourceCell.getFreeNeighbours()
         for newCell in newCells
         {
-            if let nc = newCell where nc.value == 0 && nc.wave == 0
-            {
-                newCell!.wave = sourceCell.wave + 1
-                wave.append(newCell!)
-            }
+            newCell.wave = sourceCell.wave + 1
+            wave.append(newCell)
         }
     }
     
@@ -231,3 +237,5 @@ else
 {
     print("failure!")
 }
+
+//brd.printArray("waved")
