@@ -22,13 +22,13 @@ class Cell
         self.parent = parent
     }
     
-    func getFreeNeighbours() -> Array<Cell>
+    func getNeighbours() -> Array<Cell>
     {
         var neighbours = Array<Cell>()
         typealias cellGetter = () -> (Cell?)
         let captureCell = {
             (getCell: cellGetter, inout cells: Array<Cell>) -> Void in
-            if let nc = getCell() where nc.value == 0 && nc.wave == 0
+            if let nc = getCell()
             {
                 cells.append(nc)
             }
@@ -38,7 +38,23 @@ class Cell
         captureCell(right, &neighbours)
         captureCell(up, &neighbours)
         captureCell(down, &neighbours)
-        return neighbours;
+        return neighbours
+    }
+    
+    func getNeighbourWithSmallestWave() -> Cell?
+    {
+        let neighbours = getNeighbours()
+        var c : Cell?
+        var max = Int.max;
+        for cell in neighbours
+        {
+            if cell.wave < max
+            {
+                max = cell.wave
+                c = cell
+            }
+        }
+        return c
     }
     
     func left() -> Cell?
@@ -117,7 +133,12 @@ class Board : Waveable
             return false
         }
         
-        let path = startWave(srcCell, dstCell: dstCell)
+        let waves = startWave(srcCell, dstCell: dstCell)
+        var path = Array<Cell>();
+        if !waves.isEmpty
+        {
+            path = buildPath(srcCell, dstCell: dstCell, waves: waves)
+        }
         calmArray() // comment here if want to see "waved" array
         return !path.isEmpty
     }
@@ -155,12 +176,21 @@ class Board : Waveable
     
     func appendToWaveIfValid(inout wave:Array<Cell>, sourceCell: Cell)
     {
-        let newCells = sourceCell.getFreeNeighbours()
-        for newCell in newCells
+        let newCells = sourceCell.getNeighbours()
+        for newCell in newCells where newCell.value == 0 && newCell.wave == 0
         {
             newCell.wave = sourceCell.wave + 1
             wave.append(newCell)
         }
+    }
+    
+    func buildPath(srcCell : Cell, dstCell: Cell, waves: Array<Cell>) -> Array<Cell>
+    {
+        var path = Array<Cell>()
+        path.append(dstCell)
+        
+        
+        return path
     }
     
     func calmArray()
