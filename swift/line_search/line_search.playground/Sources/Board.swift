@@ -92,7 +92,7 @@ public class Board : Waveable
     func appendToWaveIfValid(inout wave:Array<Cell>, sourceCell: Cell)
     {
         let validator : Cell.CellValidator = {(cell: Cell?) -> Bool in
-            if let nc = cell where !nc.isBusy() && nc.wave == 0
+            if let nc = cell where !nc.isBusy() && !nc.isWaved() // we are interested in fresh cells only - free and "unwaved"
             {
                 return true;
             }
@@ -115,7 +115,7 @@ public class Board : Waveable
         var nextCell: Cell?
         nextCell = dstCell
         let wavedEmptyCell : Cell.CellValidator = {(cell: Cell?) -> Bool in
-            if let nc = cell where !nc.isBusy() && nc.wave != 0
+            if let nc = cell where !nc.isBusy() && nc.isWaved()
             {
                 return true;
             }

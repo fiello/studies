@@ -27,7 +27,7 @@ public class Cell
             (getCell: CellGetter, validator : CellValidator?, inout cells: Array<Cell>) -> Void in
             if let nc = getCell()
             {
-                if let vl = validator where !vl(nc)
+                if let passValidation = validator where !passValidation(nc)
                 {
                     return;
                 }
@@ -45,6 +45,11 @@ public class Cell
     public func isBusy() -> Bool
     {
         return value != 0
+    }
+    
+    public func isWaved() -> Bool
+    {
+        return wave != 0
     }
     
     public func left() -> Cell?
