@@ -3,14 +3,65 @@
 public class Shifter
 {
     var rules : Array<ShiftRule>
+    var parent : Waveable
     
-    public init(rules: Array<ShiftRule>)
+    public init(parent: Waveable)
     {
-        self.rules = rules
+        self.parent = parent;
+        self.rules = [ShiftRule]()
+        rules.append(HorizontalRule())
+        rules.append(VerticalRule())
+        rules.append(DiagonalRule())
     }
-    
-    
-    
+
+    //protocol Shiftable
+    public func enumeratePaths(fromCell: Cell) -> [[Cell]]
+    {
+        var paths = [[Cell]]()
+        for rule in rules
+        {
+            var newPath = [Cell]()
+            var currCell : Cell? = fromCell;
+            let pathNavigator = {
+                (parent: Waveable, direction: ShiftDirection, inout currCell: Cell?) -> Void in
+                let shiftedPosition = rule.step(direction, fromRow: currCell!.row, fromCol: currCell!.col)
+                if let nc = parent.getCell(shiftedPosition.0, col: shiftedPosition.1) where nc.value == fromCell.value
+                {
+                    currCell = nc
+                }
+                else
+                {
+                    currCell = nil
+                }
+            }
+            
+            
+            // iterate back
+            while currCell != nil && currCell!.value == fromCell.value
+            {
+                newPath.append(currCell!)
+                pathNavigator(parent, ShiftDirection.Back, &currCell)
+            }
+            
+            //iterate forward
+            currCell = fromCell
+            while currCell != nil && currCell!.value == fromCell.value
+            {
+                if !fromCell.isEqualPosition(currCell!)
+                { // to skip first iteration
+                    newPath.append(currCell!)
+                }
+                pathNavigator(parent, ShiftDirection.Forward, &currCell)
+            }
+            
+            if newPath.count > 1 // we need only paths with more than 1 element, because single element would be start cell
+            {
+                paths.append(newPath)
+            }
+        }
+
+        return paths
+    }
 }
 
 

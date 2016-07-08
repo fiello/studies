@@ -202,7 +202,7 @@ public class Board : Waveable
         print("Path:", terminator: " ")
         for cell in path
         {
-            print("\(cell.row):\(cell.col)", terminator: " ")
+            print("\(cell.row):\(cell.col)(\(cell.value))", terminator: " ")
         }
         print("")
     }

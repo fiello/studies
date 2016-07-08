@@ -215,4 +215,7 @@ DerivedData
 ## Playgrounds
 timeline.xctimeline
 playground.xcworkspace
+main_playground
+main.swift
+
 

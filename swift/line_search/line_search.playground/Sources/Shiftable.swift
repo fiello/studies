@@ -2,6 +2,5 @@
 
 public protocol Shiftable
 {
-    func shiftBack() -> Cell?
-    func shiftForward() -> Cell?
+    func enumeratePaths(fromCell: Cell) -> [[Cell]]
 }
