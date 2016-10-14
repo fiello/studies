@@ -14,9 +14,9 @@ brd.data[3][2].value = 1;
 brd.data[3][3].value = 1;
 brd.data[3][4].value = 1;
 
-brd.printArray("gated board")
+brd.printArray(msg: "gated board")
 var path = Array<Cell>()
-if brd.findPath(0, srcCol: 0, dstRow: 4, dstCol: 2, path: &path)
+if brd.findPath(srcRow: 0, srcCol: 0, dstRow: 4, dstCol: 2, path: &path)
 {
     print("ok")
 }
@@ -25,14 +25,4 @@ else
     print("failure!")
 }
 
-
-brd.data[4][2].value = 1;
-if brd.findPath(0, srcCol: 0, dstRow: 4, dstCol: 2, path: &path)
-{
-    print("ok")
-}
-else
-{
-    print("failure!")
-}
 

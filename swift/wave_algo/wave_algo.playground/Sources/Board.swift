@@ -9,7 +9,7 @@ public class Board : Waveable
         self.height = height
         self.width = width
         self.data = Array<Array<Cell>>()
-        populateArray(height, columns: width)
+        populateArray(rows: height, columns: width)
         calmArray()
     }
     
@@ -27,10 +27,11 @@ public class Board : Waveable
         }
     }
     
-    public func findPath(srcRow: Int, srcCol: Int, dstRow: Int, dstCol: Int, inout path: Array<Cell>) -> Bool
+    public func findPath(srcRow: Int, srcCol: Int, dstRow: Int, dstCol: Int, path: inout Array<Cell>) -> Bool
     {
-        if (!isValidRow(srcRow) || !isValidRow(dstRow) ||
-            !isValidCol(srcCol) || !isValidCol(dstCol))
+        print("Trying to find a path between cell \(srcRow):\(srcCol) and \(dstRow):\(dstCol)")
+        if (!isValid(row: srcRow) || !isValid(row: dstRow) ||
+            !isValid(col: srcCol) || !isValid(col: dstCol))
         {
             print("invalid input parameters")
             return false
@@ -45,10 +46,10 @@ public class Board : Waveable
         }
         
         path.removeAll()
-        if canSendWaveToDestination(srcCell, dstCell: dstCell)
+        if canSendWaveToDestination(srcCell: srcCell, dstCell: dstCell)
         {
-            path = buildReversePath(srcCell, dstCell: dstCell)
-            path = path.reverse()
+            path = buildReversePath(srcCell: srcCell, dstCell: dstCell)
+            path = path.reversed()
         }
         calmArray() // comment here if want to see "waved" array
         return !path.isEmpty
@@ -59,7 +60,7 @@ public class Board : Waveable
         var currentWave = Array<Cell>();
         currentWave.append(srcCell)
         srcCell.wave = 1; // mark initial cell as 1, all the rest are yet untouched and carry 0 - "calm"
-        return !sendNextWave(dstCell, currentWave: currentWave).isEmpty
+        return !sendNextWave(dstCell: dstCell, currentWave: currentWave).isEmpty
     }
     
     // set of recursive functioins that will return only when we reach dst or dead end
@@ -69,14 +70,14 @@ public class Board : Waveable
         
         for cell in currentWave
         {
-            if dstCell.isEqualPosition(cell)
+            if dstCell.isEqualPosition(cell: cell)
             {
                 // we are at destination point, throw current wave array back to top
                 nextWave.append(cell)
                 return nextWave;
             }
             
-            appendToWaveIfValid(&nextWave, sourceCell: cell)
+            appendToWaveIfValid(wave: &nextWave, sourceCell: cell)
         }
         
         if nextWave.isEmpty
@@ -85,20 +86,20 @@ public class Board : Waveable
             return Array<Cell>()
         }
         
-        return sendNextWave(dstCell, currentWave: nextWave)
+        return sendNextWave(dstCell: dstCell, currentWave: nextWave)
     }
     
     // inspect all neighbours of given cell, and if valid (non-busy and "calm") - add to given wave
-    func appendToWaveIfValid(inout wave:Array<Cell>, sourceCell: Cell)
+    func appendToWaveIfValid(wave: inout Array<Cell>, sourceCell: Cell)
     {
         let validator : Cell.CellValidator = {(cell: Cell?) -> Bool in
-            if let nc = cell where !nc.isBusy() && nc.wave == 0
+            if let nc = cell, !nc.isBusy() && nc.wave == 0
             {
                 return true;
             }
             return false
         }
-        let newCells = sourceCell.getNeighbours(validator)
+        let newCells = sourceCell.getNeighbours(validator: validator)
         for newCell in newCells
         {
             newCell.wave = sourceCell.wave + 1
@@ -115,16 +116,16 @@ public class Board : Waveable
         var nextCell: Cell?
         nextCell = dstCell
         let wavedEmptyCell : Cell.CellValidator = {(cell: Cell?) -> Bool in
-            if let nc = cell where !nc.isBusy() && nc.wave != 0
+            if let nc = cell, !nc.isBusy() && nc.wave != 0
             {
                 return true;
             }
             return false
         }
         
-        while !srcCell.isEqualPosition(nextCell)
+        while !srcCell.isEqualPosition(cell: nextCell)
         {
-            let smallWaveNeighbours = nextCell!.getNeighbours(wavedEmptyCell);
+            let smallWaveNeighbours = nextCell!.getNeighbours(validator: wavedEmptyCell);
             if smallWaveNeighbours.isEmpty
             {
                 // should never end up here, worth an assert?
@@ -161,15 +162,15 @@ public class Board : Waveable
     }
     
     // see if row is in constraints of current board and does not jump out of borders
-    func isValidRow(rowNum: Int) -> Bool
+    func isValid(row: Int) -> Bool
     {
-        return rowNum >= 0 && rowNum < self.height
+        return row >= 0 && row < self.height
     }
     
     // same as isValidRow but for columns
-    func isValidCol(colNum: Int) -> Bool
+    func isValid(col: Int) -> Bool
     {
-        return colNum >= 0 && colNum < self.width
+        return col >= 0 && col < self.width
     }
     
     // prints current array with "wave" contents
@@ -210,7 +211,7 @@ public class Board : Waveable
     // Waveable protocol implementation
     public func getCell(row: Int, col: Int) -> Cell?
     {
-        if isValidRow(row) && isValidCol(col)
+        if isValid(row: row) && isValid(col: col)
         {
             return data[row][col]
         }

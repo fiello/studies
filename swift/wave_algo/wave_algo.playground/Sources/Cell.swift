@@ -24,10 +24,10 @@ public class Cell
         var neighbours = Array<Cell>()
         typealias CellGetter = () -> (Cell?)
         let captureCell = {
-            (getCell: CellGetter, validator : CellValidator?, inout cells: Array<Cell>) -> Void in
+            (getCell: CellGetter, validator : CellValidator?, cells: inout Array<Cell>) -> Void in
             if let nc = getCell()
             {
-                if let vl = validator where !vl(nc)
+                if let vl = validator , !vl(nc)
                 {
                     return;
                 }
@@ -49,22 +49,22 @@ public class Cell
     
     public func left() -> Cell?
     {
-        return parent.getCell(row, col: col - 1)
+        return parent.getCell(row: row, col: col - 1)
     }
     
     public func right() -> Cell?
     {
-        return parent.getCell(row, col: col + 1)
+        return parent.getCell(row: row, col: col + 1)
     }
     
     public func up() -> Cell?
     {
-        return parent.getCell(row - 1, col: col)
+        return parent.getCell(row: row - 1, col: col)
     }
     
     public func down() -> Cell?
     {
-        return parent.getCell(row + 1, col: col)
+        return parent.getCell(row: row + 1, col: col)
     }
     
     public func isEqualPosition(cell: Cell?) -> Bool
