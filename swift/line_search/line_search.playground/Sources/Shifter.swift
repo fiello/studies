@@ -17,15 +17,18 @@ public class Shifter
     //protocol Shiftable
     public func enumeratePaths(fromCell: Cell) -> [[Cell]]
     {
+        print("Buldig paths crossing the following cell \(fromCell.row):\(fromCell.col)...")
+
+        
         var paths = [[Cell]]()
         for rule in rules
         {
             var newPath = [Cell]()
             var currCell : Cell? = fromCell;
             let pathNavigator = {
-                (parent: Waveable, direction: ShiftDirection, inout currCell: Cell?) -> Void in
-                let shiftedPosition = rule.step(direction, fromRow: currCell!.row, fromCol: currCell!.col)
-                if let nc = parent.getCell(shiftedPosition.0, col: shiftedPosition.1) where nc.value == fromCell.value
+                (parent: Waveable, direction: ShiftDirection, currCell: inout Cell?) -> Void in
+                let shiftedPosition = rule.step(direction: direction, fromRow: currCell!.row, fromCol: currCell!.col)
+                if let nc = parent.getCell(row: shiftedPosition.0, col: shiftedPosition.1), nc.value == fromCell.value
                 {
                     currCell = nc
                 }
@@ -47,7 +50,7 @@ public class Shifter
             currCell = fromCell
             while currCell != nil && currCell!.value == fromCell.value
             {
-                if !fromCell.isEqualPosition(currCell!)
+                if !fromCell.isEqualPosition(cell: currCell!)
                 { // to skip first iteration
                     newPath.append(currCell!)
                 }

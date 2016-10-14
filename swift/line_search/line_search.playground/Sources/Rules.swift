@@ -7,9 +7,9 @@ public class HorizontalRule : ShiftRule
         switch direction
         {
         case .Back:
-            return stepBack(fromRow, fromCol: fromCol)
+            return stepBack(fromRow: fromRow, fromCol: fromCol)
         case .Forward:
-            return stepForward(fromRow, fromCol: fromCol)
+            return stepForward(fromRow: fromRow, fromCol: fromCol)
             
         }
     }
@@ -33,9 +33,9 @@ public class VerticalRule : ShiftRule
         switch direction
         {
         case .Back:
-            return stepUp(fromRow, fromCol: fromCol)
+            return stepUp(fromRow: fromRow, fromCol: fromCol)
         case .Forward:
-            return stepDown(fromRow, fromCol: fromCol)
+            return stepDown(fromRow: fromRow, fromCol: fromCol)
             
         }
     }
@@ -59,9 +59,9 @@ public class DiagonalRule : ShiftRule
         switch direction
         {
         case .Back:
-            return stepBackUp(fromRow, fromCol: fromCol)
+            return stepBackUp(fromRow: fromRow, fromCol: fromCol)
         case .Forward:
-            return stepForwardDown(fromRow, fromCol: fromCol)
+            return stepForwardDown(fromRow: fromRow, fromCol: fromCol)
             
         }
     }

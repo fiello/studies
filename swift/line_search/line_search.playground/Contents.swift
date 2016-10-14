@@ -16,10 +16,12 @@ brd.data[4][2].value = 2
 
 brd.data[1][1].value = 2
 
+
+brd.printArray(msg: "gated board")
 var shifter = Shifter(parent: brd)
-let paths = shifter.enumeratePaths(brd.data[2][2])
+let paths = shifter.enumeratePaths(fromCell: brd.data[2][2])
 
 for path in paths
 {
-    brd.printPath(path)
+    brd.printPath(path: path)
 }
