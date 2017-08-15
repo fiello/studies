@@ -1,15 +1,24 @@
 
 
-async function randomize_exception() : Promise<string> {
-    let val = Math.random() * 10;
-    if (val > 5) {
-       console.log("exception block with " + val )
-       throw new Error("bad exception");
-       //return "bad";
-    }
+async function invalid() : Promise<string> {
+    throw new Error("fail");
+}
 
-    console.log("passed exception block with " + val);
-    return "good";
+
+async function randomize_exception() : Promise<string> {
+    let alwaysThrow = await invalid();
+    try {
+        let val = Math.random() * 10;
+        if (val > 5) {
+            console.log("exception block with " + val )   
+            throw new Error("bad");
+        }
+
+        console.log("passed exception block with " + val);
+        return "good";
+    } catch (err) {
+        throw new Error("bad re-thrown");
+    }
 }
 
 async function generate() {
