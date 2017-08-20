@@ -4,9 +4,8 @@ async function invalid() : Promise<string> {
     throw new Error("fail");
 }
 
-
 async function randomize_exception() : Promise<string> {
-    let alwaysThrow = await invalid();
+    //let alwaysThrow = await invalid();
     try {
         let val = Math.random() * 10;
         if (val > 5) {
@@ -26,11 +25,17 @@ async function generate() {
         let promise = randomize_exception();
         promise.then(res => {
             console.log("Handled result: " + res);
+        }).then(__ => {
+            console.log("continue handling result");
         }).catch( err => {
             console.log("Catch chain: " + err);
+        }).then(__ => {
+            console.log("after exception handling");
         });
     } catch (err) {
         console.log("in outer exception block with " + err);
     }
 }
+
 generate();
+
